@@ -17,7 +17,7 @@
 /**
  * Comparator for two G4SipmDigi instances. Evaluates the trigger times.
  */
-struct G4SipmDigiComparatorReverse: public std::binary_function<G4SipmDigi*, G4SipmDigi*, bool> {
+struct G4SipmDigiComparatorReverse {
 	bool operator()(G4SipmDigi*& left, G4SipmDigi*& right) const {
 		return left->getTime() > right->getTime();
 	}

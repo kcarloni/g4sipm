@@ -18,7 +18,7 @@ endif()
 
 # Boost
 set(Boost_USE_MULTITHREADED OFF)
-find_package(Boost 1.50.0 COMPONENTS date_time program_options filesystem system regex REQUIRED)
+find_package(Boost 1.50.0 COMPONENTS date_time program_options filesystem regex REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIR})
 set(LIBS ${LIBS} ${Boost_LIBRARIES})
