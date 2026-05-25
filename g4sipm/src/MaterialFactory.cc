@@ -99,6 +99,23 @@ G4Material* MaterialFactory::getEpoxy() {
 	return epoxy;
 }
 
+G4Material* MaterialFactory::makeEpoxyComposition(const G4String& name, double density) {
+	// Builds a fresh epoxy-composition material WITHOUT using the
+	// derived-material ctor `new G4Material(name, density, getEpoxy())`.
+	//
+	// That ctor invokes `CopyPointersOfBaseMaterial`, which copies the base
+	// material's `fMaterialPropertiesTable` pointer into the derived
+	// material. The caller's subsequent `SetMaterialPropertiesTable(...)`
+	// then calls `delete fMaterialPropertiesTable` and frees an MPT that
+	// the base material still references — a double-owner UAF. Use this
+	// helper whenever the caller intends to attach its own MPT.
+	G4Material* m = new G4Material(name, density, 3, kStateSolid);
+	m->AddElement(G4NistManager::Instance()->FindOrBuildElement("Si"), 15);
+	m->AddElement(G4NistManager::Instance()->FindOrBuildElement("H"), 16);
+	m->AddElement(G4NistManager::Instance()->FindOrBuildElement("O"), 2);
+	return m;
+}
+
 G4Material* MaterialFactory::getSilicon() {
 	if (silicon == NULL) {
 		silicon = G4NistManager::Instance()->FindOrBuildMaterial("G4_Si");

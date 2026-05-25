@@ -59,6 +59,14 @@ public:
 	G4Material* getEpoxy();
 
 	/**
+	 * Build a fresh G4Material with epoxy's element composition (Si=15, H=16,
+	 * O=2) and the given name + density. Unlike `new G4Material(name, density,
+	 * getEpoxy())`, this does NOT inherit `getEpoxy()`'s MPT pointer, so the
+	 * caller can safely attach its own MPT via SetMaterialPropertiesTable.
+	 */
+	G4Material* makeEpoxyComposition(const G4String& name, double density);
+
+	/**
 	 * @return G4Material - silicon.
 	 */
 	G4Material* getSilicon();

@@ -120,8 +120,9 @@ void G4SipmConfigFileModel::initializePde() {
 }
 
 void G4SipmConfigFileModel::initializeWindowMaterial() {
-	windowMaterial = new G4Material(boost::str(boost::format("%s-windowMaterial") % getName()),
-			1.0 * CLHEP::g / CLHEP::cm3, MaterialFactory::getInstance()->getEpoxy());
+	windowMaterial = MaterialFactory::getInstance()->makeEpoxyComposition(
+			boost::str(boost::format("%s-windowMaterial") % getName()),
+			1.0 * CLHEP::g / CLHEP::cm3);
 	double energies[] = { 1 * CLHEP::eV, 10 * CLHEP::eV };
 	double rindex = p.getNumber("windowRefractiveIndex");
 	double indices[] = { rindex, rindex };
