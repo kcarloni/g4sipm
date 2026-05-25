@@ -41,7 +41,13 @@ MaterialFactory* MaterialFactory::getInstance() {
 G4Material* MaterialFactory::getBoronCarbideCeramic() {
 	if (boronCarbideCeramic == NULL) {
 		boronCarbideCeramic = G4NistManager::Instance()->FindOrBuildMaterial("G4_BORON_CARBIDE");
+		// Attach an empty MPT so optical processes (Cerenkov, Rayleigh,
+		// Scintillation, …) can safely call GetMaterialPropertiesTable() →
+		// GetProperty(...) without dereferencing an unset / uninitialised
+		// table pointer. Required since Geant4 ≥10.5 walks every material
+		// in G4Material::GetMaterialTable() at BuildPhysicsTable time.
 		// TODO(tim): implement refractive index. This is important for the interaction with light to work (reflection, etc.).
+		boronCarbideCeramic->SetMaterialPropertiesTable(new G4MaterialPropertiesTable());
 	}
 	return boronCarbideCeramic;
 }
@@ -49,7 +55,10 @@ G4Material* MaterialFactory::getBoronCarbideCeramic() {
 G4Material* MaterialFactory::getCopper() {
 	if (copper == NULL) {
 		copper = G4NistManager::Instance()->FindOrBuildMaterial("G4_Cu");
+		// See note in getBoronCarbideCeramic() — empty MPT is required for
+		// Geant4 ≥10.5 to walk this material safely at BuildPhysicsTable.
 		// TODO(tim): implement refractive index. This is important for the interaction with light to work (reflection, etc.).
+		copper->SetMaterialPropertiesTable(new G4MaterialPropertiesTable());
 	}
 	return copper;
 }
