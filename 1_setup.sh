@@ -10,6 +10,11 @@
 #                 otherwise left to CMake's own search.
 #   G4SIPM_UIVIS  optional, ON/OFF (default ON). Set OFF for a Geant4 built
 #                 without UI/visualisation drivers.
+#   G4SIPM_BUILDDIR
+#                 optional. Where to build. Defaults to build/g4-<version>,
+#                 so libraries built against different Geant4 versions do not
+#                 overwrite each other. G4ScintKit's bash_scripts/1_setup.sh
+#                 sets this; standalone callers can leave it unset.
 #
 # G4SIPM is taken from the environment if set, otherwise derived from this
 # script's own location.
@@ -29,8 +34,18 @@ fi
 cd "$G4SIPM" || exit 1
 git submodule update --init || exit 1
 
-mkdir -p "$G4SIPM/build" && cd "$G4SIPM/build" || {
-    echo "g4sipm/1_setup: could not create or enter $G4SIPM/build" >&2; exit 1; }
+# Version-scope the build dir so a library built against another Geant4 is
+# never silently reused. geant4-config is on PATH once geant4.sh is sourced.
+if [[ -z "${G4SIPM_BUILDDIR:-}" ]]; then
+    _g4tag="$(geant4-config --version 2>/dev/null)"
+    : "${_g4tag:=unknown}"
+    G4SIPM_BUILDDIR="$G4SIPM/build/g4-$_g4tag"
+    unset _g4tag
+fi
+export G4SIPM_BUILDDIR
+
+mkdir -p "$G4SIPM_BUILDDIR" && cd "$G4SIPM_BUILDDIR" || {
+    echo "g4sipm/1_setup: could not create or enter $G4SIPM_BUILDDIR" >&2; exit 1; }
 
 # Boost: prefer an explicit BOOST_ROOT from the environment; else fall back to
 # Homebrew's prefix if available (macOS); else let CMake find Boost itself.
