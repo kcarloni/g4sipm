@@ -15,9 +15,20 @@
 
 OpticalPhysicsList::OpticalPhysicsList(int verbose, std::vector<G4OpticalProcessIndex> deactivate) {
 	G4OpticalPhysics* phys = new G4OpticalPhysics(verbose);
-	// Deactivate processes
+	// Deactivate processes.
+	//
+	// Geant4 11.0 removed G4OpticalPhysics::Configure; process activation now
+	// lives on the G4OpticalParameters singleton and is keyed by process name
+	// rather than by enum, with G4OpticalProcessName() doing the mapping.
+	//
+	// Note this is no longer a property of *this* physics list: the setting is
+	// process-wide, so constructing two differently-configured
+	// OpticalPhysicsList objects would have the second overwrite the first.
+	// Nothing does that today -- G4ScintKit's g4scint builds its own physics
+	// list via GODDeSS and never instantiates this class.
+	G4OpticalParameters* opt = G4OpticalParameters::Instance();
 	for (std::vector<G4OpticalProcessIndex>::iterator it = deactivate.begin(); it != deactivate.end(); it++) {
-		phys->Configure(*it, false);
+		opt->SetProcessActivation(G4OpticalProcessName(*it), false);
 	}
 	//
 	RegisterPhysics(phys);

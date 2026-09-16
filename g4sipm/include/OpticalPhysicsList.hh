@@ -12,6 +12,10 @@
 #include <G4VModularPhysicsList.hh>
 #include <G4EmStandardPhysics.hh>
 #include <G4OpticalPhysics.hh>
+// G4OpticalProcessIndex lives here as of Geant4 11.0; it used to arrive via
+// G4OpticalPhysics.hh. Included explicitly so the signature below does not
+// depend on another header's include graph.
+#include <G4OpticalParameters.hh>
 
 /**
  * Physics list registering all optical processes described in G4OpticalPhysics.
