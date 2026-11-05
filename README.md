@@ -27,7 +27,7 @@ The build process has been tested with Ubuntu 15.04 and Scientific Linux 6.
 
 Clone the code
 
-    git clone https://github.com/ntim/g4sipm.git source
+    git clone https://github.com/kcarloni/g4sipm.git source
     cd source
 
 Initialize submodules Googletest and Jansson    
